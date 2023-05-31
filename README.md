@@ -76,12 +76,18 @@ This script has only been tested with Cloudflare, which works well.
 Visit the [Caddy download page](https://caddyserver.com/download) to see the DNS authentication plugins currently available.  To build Caddy with your desired plugin, use the last part of the "Package" on that page as DNS_PLUGIN in your `homeassistant-config` file.  E.g., if the package name is `github.com/caddy-dns/cloudflare`, you'd set `DNS_PLUGIN=cloudflare`.  From that page, there are also links to the documentation for each plugin, which will describe what credentials are needed.  If your provider needs only an API token (as is the case with Cloudflare, and apparently with DNSPod and Gandi), you'll likely be able to set `DNS_TOKEN=long_api_token` in the `homeassistant-config` file and not need to do anything else.  If your provider requires different credentials, you'll need to modify the Caddyfile to account for them.
 
 ### Execution
-Once you've downloaded the script and prepared the configuration file, run this script (`script homeassistant.log ./homeassistant-jail.sh`).  The script will run for maybe a minute.  When it finishes, your jail will be created, Vaultwarden will be installed, and you'll be shown the randomly-generated token for the admin portal.
+Once you've downloaded the script and prepared the configuration file, run this script (`script homeassistant.log ./homeassistant-jail.sh`).  The script will run for maybe a minute.  When it finishes, your jail will be created, and you will be able to login.
+You will be prompted to copy a default configuration.yaml file, or to not copy it at the end of the script. It is a modified version of the standard one with a few exceptions.
+- It is configured to allow caddy to reverse proxy.
+- It has all the default integrations except "bluetooth" and "stream" because these cause errors on FreeBSD.
+# By default it will be copied, and you should only choose to not copy if it is a reinstall, or you have your own configured.
+- default_config is disabled, but as stated above, all default integrations are enabled excluding those listed above.
 
 ### Notes
 - This script uses the same RC Service Script from @tprelog on the TrueNAS forums. Credits go to him for that.
 - I have also edited the configurations.yaml file to include all the default integrations (as of 05/30/2023) excluding "bluetooth" and "stream" as I have found these don't load properly when "default_config" is enabled.
 - This is an unsupported installation of Homeassistant Core, but it works fairly well as of right now. 
 - It is basically the same thing as the plugin that used to exist on TrueNAS community plugins.
-
+- In order to reverse proxy, you must edit the configuration.yaml file to include your reverse proxy IP. This is set to 127.0.0.1 by default.
+- Config files for homeassistant are in `/home/homeassistant/config`
 - The Caddyfile is located at `/usr/local/www/Caddyfile`
